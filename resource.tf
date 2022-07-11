@@ -52,7 +52,8 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-resource "aws_instance" "my_instance" {
+resource "aws_instance" "master" {
+  count = 1
   ami = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   key_name = "connect"
@@ -60,11 +61,12 @@ resource "aws_instance" "my_instance" {
   subnet_id = aws_subnet.my_subnet.id
   vpc_security_group_ids = ["${aws_vpc.my_vpc.default_security_group_id}"]
   tags = {
-    "Name" = "kproject-n01"
+    "Name" = "kmaster-n0${count.index+1}"
   }
 }
 
-resource "aws_instance" "my_instance2" {
+resource "aws_instance" "worker" {
+  count = 1
   ami = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   key_name = "connect"
@@ -72,6 +74,6 @@ resource "aws_instance" "my_instance2" {
   subnet_id = aws_subnet.my_subnet.id
   vpc_security_group_ids = ["${aws_vpc.my_vpc.default_security_group_id}"]
   tags = {
-    "Name" = "kproject-n02"
+    "Name" = "kworker-n0${count.index+1}"
   }
 }
